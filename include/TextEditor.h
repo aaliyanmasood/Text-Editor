@@ -3,6 +3,7 @@
 #include "DoublyLinkedList.hpp"
 using namespace std;
 
+class TextEditorManger;
 class TextEditor{
     private:
         DoublyLinkedList<DoublyLinkedList<char>*> text;
@@ -28,6 +29,7 @@ class TextEditor{
         void setCursorPosition(int lineIndex, int nodeIndex);
 
         string getText();
+        
         int getLineIndex();
         int getNodeIndex();
 };
