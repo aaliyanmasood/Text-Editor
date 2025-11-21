@@ -4,7 +4,8 @@
 
 TextEditorManager::TextEditorManager() {
     textEditor = new TextEditor();
-    mainWindow = new MainWindow(this); // Pass 'this' to MainWindow
+    // passing pointer to mainWindow
+    mainWindow = new MainWindow(this);
 }
 
 TextEditorManager::~TextEditorManager() {
@@ -12,7 +13,15 @@ TextEditorManager::~TextEditorManager() {
     delete mainWindow;
 }
 
+void TextEditorManager::initializeEditor(){
+    textEditor->initialize();
+    updateDisplay();
+}
+
 void TextEditorManager::insertChar(char c) {
+    if(textEditor->hasSelection()){
+        textEditor->deleteSelection();
+    }
     if(c == '\n')
         textEditor->addNewLine();
     else
@@ -21,12 +30,20 @@ void TextEditorManager::insertChar(char c) {
 }
 
 void TextEditorManager::deleteChar() {
-    textEditor->removeChar();
+    if(textEditor->hasSelection()){
+        textEditor->deleteSelection();
+    }else{
+        textEditor->removeChar();
+    }
     updateDisplay();
 }
 
 void TextEditorManager::deleteCharFront(){
-    textEditor->removeCharFront();
+    if(textEditor->hasSelection()){
+        textEditor->deleteSelection();
+    }else{
+        textEditor->removeCharFront();
+    }
     updateDisplay();
 }
 
@@ -53,6 +70,59 @@ void TextEditorManager::updateDisplay() {
     mainWindow->setCursorPosition(textEditor->getLineIndex(), textEditor->getNodeIndex());
 }
 
+void TextEditorManager::startSelection(){
+    textEditor->startSelection();
+}
+
+void TextEditorManager::updateSelection(){
+    textEditor->updateSelection();
+}
+
+void TextEditorManager::clearSelection(){
+    textEditor->endSelection();
+}
+
+std::string TextEditorManager::getSelectedText(){
+    return textEditor->getSelectedText();
+}
+
+Selection TextEditorManager::getSelectionDetails(){
+    return textEditor->getSelectionDetails();
+}
+
+bool TextEditorManager::hasSelection(){
+    return textEditor->hasSelection();
+}
+
+void TextEditorManager::copyToClipboard() {
+    if (textEditor->getSelectionDetails().isSelecting) {
+        string selectedText = textEditor->getSelectedText();
+        QApplication::clipboard()->setText(QString::fromStdString(selectedText));
+    }
+}
+
+void TextEditorManager::cutToClipboard() {
+    if (textEditor->getSelectionDetails().isSelecting) {
+        string selectedText = textEditor->getSelectedText();
+        QApplication::clipboard()->setText(QString::fromStdString(selectedText));
+        
+        textEditor->deleteSelection();
+        updateDisplay();
+    }
+}
+
+void TextEditorManager::pasteFromClipboard() {
+    QString clipboardText = QApplication::clipboard()->text();
+    if (!clipboardText.isEmpty()) {
+        if (textEditor->hasSelection()) {
+            textEditor->deleteSelection();
+        }
+        
+        textEditor->insertString(clipboardText.toStdString());
+        updateDisplay();
+    }
+}
+
 void TextEditorManager::saveToFile(const string& filePath){
     string text= textEditor->getText();
     ofstream file(filePath,ios::out);
@@ -67,12 +137,12 @@ void TextEditorManager::saveToFile(const string& filePath){
 void TextEditorManager::loadFromFile(const string& filePath){
     ifstream file(filePath,ios::in);
     if (!file.is_open()) {
-    cout << "Error opening file.\n";
-    return;
-}
-stringstream buffer;
-buffer << file.rdbuf();
-string data = buffer.str();
-textEditor->insertString(data);
-updateDisplay();
+        cout << "Error opening file.\n";
+        return;
+    }
+    stringstream buffer;
+    buffer << file.rdbuf();
+    string data = buffer.str();
+    textEditor->overwriteText(data);
+    updateDisplay();
 }

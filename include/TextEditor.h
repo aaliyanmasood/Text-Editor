@@ -1,9 +1,23 @@
 #pragma once
+
 #include <iostream>
 #include "DoublyLinkedList.hpp"
 using namespace std;
 
+<<<<<<< HEAD
 class TextEditorManger;
+=======
+struct Selection{
+    bool isSelecting;
+    int startLine;
+    int startNode;
+    int endLine;
+    int endNode;
+
+    Selection() : isSelecting(false), startLine(0), startNode(0), endLine(0), endNode(0){}
+};
+
+>>>>>>> f1830aade41c36eeaff4c547f6463e5415a5c3eb
 class TextEditor{
     private:
         DoublyLinkedList<DoublyLinkedList<char>*> text;
@@ -11,9 +25,13 @@ class TextEditor{
         Node<DoublyLinkedList<char>*>* currentLineNode;
         int nodeIndex;
         int lineIndex;
+        Selection selection;
     public:
         TextEditor();
         ~TextEditor();
+        void initialize();
+
+        void overwriteText(string value);
 
         void insertChar(char value);
         void insertString(string value);
@@ -27,6 +45,14 @@ class TextEditor{
         void moveCursor(int x, int y);
 
         void setCursorPosition(int lineIndex, int nodeIndex);
+
+        void startSelection();
+        void updateSelection();
+        void endSelection();
+        void deleteSelection();
+        string getSelectedText();
+        Selection getSelectionDetails();
+        bool hasSelection();
 
         string getText();
         

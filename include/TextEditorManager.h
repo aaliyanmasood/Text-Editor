@@ -1,35 +1,45 @@
-#ifndef TEXTEDITORMANAGER_H
-#define TEXTEDITORMANAGER_H
+#pragma once
 
 #include "TextEditor.h"
 #include "mainwindow.h"
-#include <QObject>
+#include <QApplication>
+#include <QClipboard>
 class MainWindow;
 
-class TextEditorManager : public QObject {
-    Q_OBJECT
+class TextEditorManager{
+    private:
+        TextEditor* textEditor;
+        MainWindow* mainWindow;
 
-private:
-    TextEditor* textEditor;
-    MainWindow* mainWindow;
+    public:
+        TextEditorManager();
+        ~TextEditorManager();
+        void initializeEditor();
 
-public:
-    TextEditorManager();
-    ~TextEditorManager();
+        void insertChar(char c);
 
-    // Core functionality methods
-    void insertChar(char c);
-    void deleteChar();
-    void deleteCharFront();
-    void moveCursor(int x, int y);
-    void setCursorPosition(int line, int column);
-    std::string getText();
-    void run();
+        void deleteChar();
+        void deleteCharFront();
 
-    void saveToFile(const string& filePath);
-    void loadFromFile(const string& filePath);
-private:
-    void updateDisplay();
+        void moveCursor(int x, int y);
+        void setCursorPosition(int line, int column);
+
+        std::string getText();
+
+        void saveToFile(const string& filePath);
+        void loadFromFile(const string& filePath);
+
+        void startSelection();
+        void updateSelection();
+        void clearSelection();
+        std::string getSelectedText();
+        Selection getSelectionDetails();
+        bool hasSelection();
+
+        void copyToClipboard();
+        void cutToClipboard();
+        void pasteFromClipboard();
+
+        void updateDisplay();
+        void run();
 };
-
-#endif
