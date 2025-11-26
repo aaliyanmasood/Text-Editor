@@ -1,12 +1,11 @@
 #pragma once
 
 #include <iostream>
+#include <string>
+#include "Stack.hpp"
 #include "DoublyLinkedList.hpp"
 using namespace std;
 
-<<<<<<< HEAD
-class TextEditorManger;
-=======
 struct Selection{
     bool isSelecting;
     int startLine;
@@ -17,7 +16,6 @@ struct Selection{
     Selection() : isSelecting(false), startLine(0), startNode(0), endLine(0), endNode(0){}
 };
 
->>>>>>> f1830aade41c36eeaff4c547f6463e5415a5c3eb
 class TextEditor{
     private:
         DoublyLinkedList<DoublyLinkedList<char>*> text;
@@ -26,10 +24,15 @@ class TextEditor{
         int nodeIndex;
         int lineIndex;
         Selection selection;
+        Stack<char> undo;
+        Stack<char> redo;
     public:
         TextEditor();
         ~TextEditor();
         void initialize();
+        //my functions
+        void unchardel(Node<char>* ptr);
+        void undooperation();
 
         void overwriteText(string value);
 

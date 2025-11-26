@@ -242,10 +242,12 @@ class DoublyLinkedList{
                 removeFromHead();
                 return nullptr;
             }
-
-            Node<T>* temp = node->prev;
+            Node<T>* temp;
+            if(node->prev!=nullptr&&node->next!=nullptr){
+            temp = node->prev;
             node->prev->next = node->next;
             node->next->prev = node->prev;
+            }
             delete node;
             return temp;
         }
