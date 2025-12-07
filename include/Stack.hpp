@@ -2,18 +2,21 @@
 #include <iostream>
 using namespace std;
 
+struct Operation{
+    char letter;
+    int nodepos;
+    int linepos;
+    Operation(){};
+    Operation(char a, int b, int c):letter(a),nodepos(b),linepos(c){}
+};
 template <typename T>
 struct Nodes{
     T value;
-    //current Node;
-    int nodepos;
-    int linepos;
     Nodes* next;
     Nodes(){
-        linepos=nodepos=0;
         next=nullptr;
     };
-    Nodes(T value, Nodes* next = nullptr, int NodePos=0, int LinePos=0):value(value), next(next), nodepos(NodePos), linepos(LinePos) {}
+    Nodes(T value, Nodes* next = nullptr) : value(value), next(next) {}
 };
 
 template <typename T>
@@ -36,15 +39,15 @@ class Stack {
             }
         }  
         
-        void push(T value, int NodeIndex, int LineIndex){
-            Nodes<T>* newNode = new Nodes<T>(value, top, NodeIndex, LineIndex);
+        void push(T value){
+            Nodes<T>* newNode = new Nodes<T>(value, top);
             top = newNode;
             size++;
         }
 
         Nodes<T>* pop(){
             if(isEmpty()){
-                return new Nodes<char>();
+                return new Nodes<T>();
             }
             Nodes<T>* temp = top;
             T value = top->value;

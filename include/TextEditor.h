@@ -24,8 +24,7 @@ class TextEditor{
         int nodeIndex;
         int lineIndex;
         Selection selection;
-        Stack<char> undo;
-        Stack<char> redo;
+        Stack<Operation> undo;
     public:
         TextEditor();
         ~TextEditor();

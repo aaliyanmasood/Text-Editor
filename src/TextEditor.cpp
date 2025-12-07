@@ -35,8 +35,8 @@ void TextEditor::initialize(){
 }
 
 void TextEditor:: unchardel(Node<char>* ptr){
-            char temp = ptr->value;
-            undo.push(temp, nodeIndex, lineIndex);
+            Operation temp(ptr->value, nodeIndex, lineIndex);
+            undo.push(temp);
         }
 void TextEditor::overwriteText(string value){
     initialize();
@@ -44,48 +44,48 @@ void TextEditor::overwriteText(string value){
 }
 void TextEditor::undooperation(){
         if(!undo.isEmpty()){
-            Nodes<char>* data = undo.pop();
+            Nodes<Operation>* data = undo.pop();
             Node<DoublyLinkedList<char>*>* line = text.getHead();
             Node<char>* character;
             int linecount=0;
             int charpos=1;
-            while(linecount<data->linepos&&line!=text.getTail()){
+            while(linecount<data->value.linepos&&line!=text.getTail()){
                 linecount++;
                 line= line->next;
             }
-                if(line==text.getTail()&&linecount<data->linepos){
-                    while(linecount+1<data->linepos){
+                if(line==text.getTail()&&linecount<data->value.linepos){
+                    while(linecount+1<data->value.linepos){
                         DoublyLinkedList<char>* line=new DoublyLinkedList<char>();
                         text.insertAtTail(line);
                         linecount++;
                     }
-                    char temp2=data->value;
+                    char temp2=data->value.letter;
                     DoublyLinkedList<char>* Lastline=new DoublyLinkedList<char>();
                     text.insertAtTail(Lastline);
-                    if(charpos==data->nodepos){
+                    if(charpos==data->value.nodepos){
                     Lastline->insertAtHead(temp2);}
                     else{
                         character=line->value->head;
                         character=new Node<char>(' ',nullptr,nullptr);
-                        while(charpos+1<data->nodepos){
+                        while(charpos+1<data->value.nodepos){
                         character->next=new Node<char>(' ',nullptr,character);
                         charpos++;
                         character=character->next;
                     }
-                        character->next=new Node<char>(data->value,nullptr,character);
+                        character->next=new Node<char>(data->value.letter,nullptr,character);
                         character=character->next;
                         line->value->tail=character;
                     }
                 }
                 else{
                     character=line->value->head;
-                    if(charpos==data->nodepos){
-                        Node<char>* temp=new Node<char>(data->value,character,nullptr);
+                    if(charpos==data->value.nodepos){
+                        Node<char>* temp=new Node<char>(data->value.letter,character,nullptr);
                         character->prev=temp;
                         line->value->head=temp;
                     }
                     else{
-                    while(charpos+1<data->nodepos&&character!=line->value->tail){
+                    while(charpos+1<data->value.nodepos&&character!=line->value->tail){
                     charpos++;
                     character=character->next;
                     }
@@ -94,23 +94,23 @@ void TextEditor::undooperation(){
                     //     character->next->prev=temp;
                     //     line->value->head=temp;
                     // }
-                       if(character==line->value->tail&&charpos<data->nodepos){
+                       if(character==line->value->tail&&charpos<data->value.nodepos){
                             // while(charpos-1<data->nodepos){
                             //     character->next=new Node<char>(' ',nullptr,character);
                             //     charpos++;
                             //     character=character->next;
                             // }
-                            character->next=new Node<char>(data->value,nullptr,character);
+                            character->next=new Node<char>(data->value.letter,nullptr,character);
                             character=character->next;
                             line->value->tail=character;
                             }
                         else if(character->next==nullptr){
-                            character->next=new Node<char>(data->value,nullptr,character);
+                            character->next=new Node<char>(data->value.letter,nullptr,character);
                             line->value->tail=character->next;
                         }
                         else {
                             Node<char>* temp=character->next;
-                            character->next=new Node<char>(data->value,temp,character);
+                            character->next=new Node<char>(data->value.letter,temp,character);
                             character=character->next;
                             character->next->prev=character; 
                             }
@@ -202,7 +202,7 @@ void TextEditor::removeLine(){
     // merging of current line with previous one to form a singular line
 
     Node<DoublyLinkedList<char>*>* prevLine = currentLineNode->prev;
-    undo.push(currentLineNode->value->head->value,1,lineIndex-1);///pending (merginging of  line undo and seperation of line undo)
+    //undo.push(currentLineNode->value->head->value,1,lineIndex-1);///pending (merginging of  line undo and seperation of line undo)
     currentNode = prevLine->value->getTail();
     nodeIndex = prevLine->value->getSize();
 
